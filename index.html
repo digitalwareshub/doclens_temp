@@ -7,109 +7,112 @@
 <meta name="description" content="DocLens.xyz is being restructured and will be back online soon." />
 <style>
   :root{
-    --bg:#0b1020;
-    --fg:#e6ecff;
-    --lens-size: 260px;
-    --x: 50vw; --y: 50vh;
+    --bg:#0b1020;            /* deep night */
+    --fg:#e6ecff;            /* soft white */
+    --accent:#8b9cff;        /* indigo */
+    --card:#111834;          /* doc tile */
+    --line:#23305d;          /* doc lines */
+    --lens-size: 260px;      /* desktop default */
+    --x: 50vw;
+    --y: 50vh;
   }
 
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
     background: radial-gradient(1000px 600px at 70% -10%, #15204a 0%, var(--bg) 55%) fixed;
     color:var(--fg);
     overflow:hidden;
   }
 
-  /* ===== Overlay copy ===== */
+  /* ===== Hero / Message ===== */
   .overlay{
-    position:fixed; inset:0; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; text-align:center; z-index:4; pointer-events:none; padding:24px;
+    position:fixed; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    pointer-events:none; text-align:center; z-index:3; padding:24px;
   }
-  .tag{display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px;
-    border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.05); margin-bottom:10px;}
-  h1{margin:0 0 8px; font-weight:800; letter-spacing:0.3px; font-size: clamp(28px, 5vw, 44px);
-     text-shadow: 0 6px 30px rgba(0,0,0,0.5);}
-  .sub{margin:6px 0 0; opacity:0.9; font-size: clamp(14px, 2.6vw, 18px);}
-  .brand{margin-top:16px; font-size:12px; opacity:0.65;}
+  h1{
+    margin:0 0 8px; font-weight:800; letter-spacing:0.3px;
+    font-size: clamp(28px, 5vw, 44px);
+    text-shadow: 0 6px 30px rgba(0,0,0,0.5);
+  }
+  .tag{
+    display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; letter-spacing:0.2px;
+    border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.04); margin-bottom:10px;
+  }
+  p.sub{
+    margin:6px 0 0; opacity:0.9; font-size: clamp(14px, 2.6vw, 18px);
+  }
+  .brand{
+    margin-top:16px; font-size:12px; opacity:0.65;
+  }
 
-  /* ===== File-icon wall ===== */
-  .wall{ position:fixed; inset:0; overflow:hidden; z-index:1; filter:saturate(1.02); }
-  .row{
-    position:absolute; left:0; right:0; height:160px; display:flex; gap:20px; will-change: transform;
+  /* ===== Scrolling doc wall ===== */
+  .wall{
+    position:fixed; inset:0; overflow:hidden; z-index:1; filter:saturate(1.02);
   }
+  .row{
+    position:absolute; left:0; right:0; height:160px; display:flex; gap:20px;
+    will-change: transform;
+  }
+  /* Stagger rows vertically */
   .row:nth-child(1){ top:8% }
   .row:nth-child(2){ top:26% }
   .row:nth-child(3){ top:44% }
   .row:nth-child(4){ top:62% }
   .row:nth-child(5){ top:80% }
 
+  /* Alternate scroll directions & speeds */
   @keyframes scroll-left   { from{ transform: translateX(0) } to{ transform: translateX(-50%) } }
   @keyframes scroll-right  { from{ transform: translateX(-50%) } to{ transform: translateX(0) } }
-  .row[data-dir="left"]  { animation: scroll-left 26s linear infinite }
-  .row[data-dir="right"] { animation: scroll-right 28s linear infinite }
-  .row:nth-child(3)[data-dir="left"]  { animation-duration: 30s }
-  .row:nth-child(4)[data-dir="right"] { animation-duration: 32s }
 
-  .track{ display:flex; gap:20px; padding-left:20px; }
+  .row[data-dir="left"]  { animation: scroll-left 24s linear infinite }
+  .row[data-dir="right"] { animation: scroll-right 26s linear infinite }
+  .row:nth-child(3)[data-dir="left"]  { animation-duration: 28s }
+  .row:nth-child(4)[data-dir="right"] { animation-duration: 30s }
 
-  /* ===== File icon (pure CSS) ===== */
-  .file{
-    width:220px; height:140px; border-radius:14px; flex:none; position:relative; overflow:hidden;
-    background: #0f1838;
-    border:1px solid rgba(255,255,255,0.08);
+  /* Track content (duplicated for seamless loop) */
+  .track{
+    display:flex; gap:20px; padding-left:20px;
+  }
+
+  /* A document “card” built with pure CSS */
+  .doc{
+    width:220px; height:140px; border-radius:12px; flex:none;
+    background:
+      linear-gradient(0deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06)) padding-box,
+      linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)) border-box;
+    border:1px solid transparent;
+    position:relative; overflow:hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.35);
   }
-  /* header strip (color varies by type) */
-  .file::before{
-    content:""; position:absolute; left:0; right:0; top:0; height:40px;
-    background: var(--hdr, linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)));
+  /* fake header bar */
+  .doc::before{
+    content:"";
+    position:absolute; left:0; right:0; top:0; height:26px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
   }
-  /* folded corner */
-  .file::after{
-    content:""; position:absolute; top:0; right:0; width:28px; height:28px; background:
-      linear-gradient(135deg, rgba(255,255,255,0.6) 0 50%, rgba(255,255,255,0) 50% 100%);
-    opacity:0.35;
-  }
-  /* extension badge */
-  .ext{
-    position:absolute; top:8px; left:10px; font-weight:800; font-size:14px; letter-spacing:0.5px;
-    padding:3px 8px; border-radius:8px;
-    background: rgba(0,0,0,0.25); color:#fff; border:1px solid rgba(255,255,255,0.15);
-    text-transform: uppercase;
-  }
-  /* faux lines/content */
-  .lines{
-    position:absolute; inset:54px 14px 12px 14px; opacity:0.9;
+  /* fake text lines */
+  .doc::after{
+    content:"";
+    position:absolute; inset:30px 14px 12px 14px;
     background:
-      linear-gradient(#fff0 14px, rgba(160,179,255,0.16) 14px, rgba(160,179,255,0.16) 16px, #fff0 16px) 0 0/100% 20px repeat-y;
+      linear-gradient(#fff0 14px, var(--line) 14px, var(--line) 16px, #fff0 16px) 0 0/100% 22px repeat-y,
+      radial-gradient(6px 6px at 10px 7px, rgba(255,255,255,0.22), rgba(255,255,255,0)) no-repeat;
+    opacity:0.9;
   }
 
-  /* ===== Type colors ===== */
-  .file.pdf   { --hdr: linear-gradient(180deg, #ff3b3b, #a32020) }
-  .file.docx  { --hdr: linear-gradient(180deg, #2d6cdf, #204c9a) }
-  .file.xlsx  { --hdr: linear-gradient(180deg, #27b06e, #177a4c) }
-  .file.csv   { --hdr: linear-gradient(180deg, #21c87a, #128e56) }
-  .file.pptx  { --hdr: linear-gradient(180deg, #ff7a3b, #a94a1e) }
-  .file.png   { --hdr: linear-gradient(180deg, #8b9cff, #5a67d8) }
-  .file.jpg   { --hdr: linear-gradient(180deg, #7c9cff, #4c62d1) }
-  .file.zip   { --hdr: linear-gradient(180deg, #9b7cff, #6a4cd1) }
-  .file.txt   { --hdr: linear-gradient(180deg, #8792a7, #606a7a) }
-  .file.json  { --hdr: linear-gradient(180deg, #ffd166, #c39d2f) }
-  .file.xml   { --hdr: linear-gradient(180deg, #ffd28e, #c48a36) }
-  .file.html  { --hdr: linear-gradient(180deg, #ff9a5e, #c46633) }
-  .file.md    { --hdr: linear-gradient(180deg, #8892ff, #5963d8) }
-  .file.sql   { --hdr: linear-gradient(180deg, #5ad0ff, #2a9cbc) }
-  .file.tiff  { --hdr: linear-gradient(180deg, #67e8f9, #1991a9) }
-  .file.webp  { --hdr: linear-gradient(180deg, #34d399, #158f66) }
-  .file.psd   { --hdr: linear-gradient(180deg, #1b9df0, #0f6aa7) }
-  .file.ai    { --hdr: linear-gradient(180deg, #ffb13b, #a76c1e) }
+  /* Variant accents */
+  .doc.ac1{ outline:1px solid rgba(139,156,255,0.15) }
+  .doc.ac2{ outline:1px solid rgba(140,255,210,0.12) }
+  .doc.ac3{ outline:1px solid rgba(255,189,140,0.12) }
 
-  /* ===== Lens ===== */
+  /* ===== Lens effect ===== */
   .lens-mask{
     position:fixed; inset:0; z-index:2; pointer-events:none;
+    /* We reveal the zoom layer through a circular mask at (--x, --y) */
     -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--x) var(--y), #000 0%, #000 98%, transparent 100%);
             mask-image: radial-gradient(circle var(--lens-size) at var(--x) var(--y), #000 0%, #000 98%, transparent 100%);
   }
@@ -117,176 +120,129 @@
     position:fixed; inset:0; transform:scale(1.18); transform-origin: var(--x) var(--y);
     filter:brightness(1.05) contrast(1.05);
   }
+  /* Lens ring */
   .ring{
     position:fixed; width:calc(var(--lens-size)*2); height:calc(var(--lens-size)*2);
     left:calc(var(--x) - var(--lens-size)); top:calc(var(--y) - var(--lens-size));
-    border-radius:50%; border:2px solid rgba(255,255,255,0.25);
-    box-shadow: 0 0 0 6px rgba(139,156,255,0.06), 0 0 60px rgba(139,156,255,0.45), inset 0 0 30px rgba(139,156,255,0.18);
-    backdrop-filter: blur(0.2px); pointer-events:none; z-index:3;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.25);
+    box-shadow:
+      0 0 0 6px rgba(139,156,255,0.06),
+      0 0 60px rgba(139,156,255,0.45),
+      inset 0 0 30px rgba(139,156,255,0.18);
+    backdrop-filter: blur(0.2px);
+    pointer-events:none; z-index:4;
   }
 
-  /* Responsive lens */
-  @media (max-width: 920px){ :root{ --lens-size: 200px } }
-  @media (max-width: 640px){ :root{ --lens-size: 140px } }
+  /* ===== Responsive lens size ===== */
+  @media (max-width: 920px){
+    :root{ --lens-size: 200px }
+  }
+  @media (max-width: 640px){
+    :root{ --lens-size: 140px }
+  }
 
-  /* Footer */
+  /* Small footer link */
   .footer{
-    position:fixed; left:16px; bottom:12px; z-index:4; font-size:12px; opacity:0.7;
+    position:fixed; left:16px; bottom:12px; z-index:3; font-size:12px; opacity:0.6;
   }
   .footer a{ color:#cfd8ff; text-decoration:none; border-bottom:1px dashed rgba(207,216,255,0.35) }
-  .footer a:hover{ opacity:0.95 }
+  .footer a:hover{ opacity:0.9 }
 </style>
 </head>
 <body>
 
-  <!-- Moving file-type icons -->
+  <!-- Scrolling wall (base layer) -->
   <div class="wall" id="wall-base" aria-hidden="true">
-    <!-- Each row uses two identical tracks for seamless loops -->
+    <!-- We render several rows; each row has two identical tracks for seamless loop -->
     <div class="row" data-dir="left">
       <div class="track">
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
-        <div class="file docx"><span class="ext">DOCX</span><div class="lines"></div></div>
-        <div class="file xlsx"><span class="ext">XLSX</span><div class="lines"></div></div>
-        <div class="file png"><span class="ext">PNG</span><div class="lines"></div></div>
-        <div class="file jpg"><span class="ext">JPG</span><div class="lines"></div></div>
-        <div class="file pptx"><span class="ext">PPTX</span><div class="lines"></div></div>
-        <div class="file zip"><span class="ext">ZIP</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
-        <div class="file xml"><span class="ext">XML</span><div class="lines"></div></div>
+        <div class="doc ac1"></div><div class="doc ac2"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac2"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div>
       </div>
       <div class="track" aria-hidden="true">
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
-        <div class="file docx"><span class="ext">DOCX</span><div class="lines"></div></div>
-        <div class="file xlsx"><span class="ext">XLSX</span><div class="lines"></div></div>
-        <div class="file png"><span class="ext">PNG</span><div class="lines"></div></div>
-        <div class="file jpg"><span class="ext">JPG</span><div class="lines"></div></div>
-        <div class="file pptx"><span class="ext">PPTX</span><div class="lines"></div></div>
-        <div class="file zip"><span class="ext">ZIP</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
-        <div class="file xml"><span class="ext">XML</span><div class="lines"></div></div>
+        <div class="doc ac1"></div><div class="doc ac2"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac2"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div>
       </div>
     </div>
 
     <div class="row" data-dir="right">
       <div class="track">
-        <div class="file html"><span class="ext">HTML</span><div class="lines"></div></div>
-        <div class="file md"><span class="ext">MD</span><div class="lines"></div></div>
-        <div class="file sql"><span class="ext">SQL</span><div class="lines"></div></div>
-        <div class="file tiff"><span class="ext">TIFF</span><div class="lines"></div></div>
-        <div class="file webp"><span class="ext">WEBP</span><div class="lines"></div></div>
-        <div class="file psd"><span class="ext">PSD</span><div class="lines"></div></div>
-        <div class="file ai"><span class="ext">AI</span><div class="lines"></div></div>
-        <div class="file txt"><span class="ext">TXT</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
+        <div class="doc"></div><div class="doc ac2"></div><div class="doc ac1"></div>
+        <div class="doc ac3"></div><div class="doc"></div><div class="doc ac2"></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac3"></div><div class="doc"></div>
       </div>
       <div class="track" aria-hidden="true">
-        <div class="file html"><span class="ext">HTML</span><div class="lines"></div></div>
-        <div class="file md"><span class="ext">MD</span><div class="lines"></div></div>
-        <div class="file sql"><span class="ext">SQL</span><div class="lines"></div></div>
-        <div class="file tiff"><span class="ext">TIFF</span><div class="lines"></div></div>
-        <div class="file webp"><span class="ext">WEBP</span><div class="lines"></div></div>
-        <div class="file psd"><span class="ext">PSD</span><div class="lines"></div></div>
-        <div class="file ai"><span class="ext">AI</span><div class="lines"></div></div>
-        <div class="file txt"><span class="ext">TXT</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
+        <div class="doc"></div><div class="doc ac2"></div><div class="doc ac1"></div>
+        <div class="doc ac3"></div><div class="doc"></div><div class="doc ac2"></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac3"></div><div class="doc"></div>
       </div>
     </div>
 
     <div class="row" data-dir="left">
       <div class="track">
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
-        <div class="file docx"><span class="ext">DOCX</span><div class="lines"></div></div>
-        <div class="file xlsx"><span class="ext">XLSX</span><div class="lines"></div></div>
-        <div class="file png"><span class="ext">PNG</span><div class="lines"></div></div>
-        <div class="file jpg"><span class="ext">JPG</span><div class="lines"></div></div>
-        <div class="file pptx"><span class="ext">PPTX</span><div class="lines"></div></div>
-        <div class="file zip"><span class="ext">ZIP</span><div class="lines"></div></div>
-        <div class="file txt"><span class="ext">TXT</span><div class="lines"></div></div>
-        <div class="file md"><span class="ext">MD</span><div class="lines"></div></div>
-        <div class="file sql"><span class="ext">SQL</span><div class="lines"></div></div>
+        <div class="doc ac3"></div><div class="doc"></div><div class="doc ac1"></div>
+        <div class="doc"></div><div class="doc ac2"></div><div class="doc"></div>
+        <div class="doc ac1"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac2"></div>
       </div>
       <div class="track" aria-hidden="true">
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
-        <div class="file docx"><span class="ext">DOCX</span><div class="lines"></div></div>
-        <div class="file xlsx"><span class="ext">XLSX</span><div class="lines"></div></div>
-        <div class="file png"><span class="ext">PNG</span><div class="lines"></div></div>
-        <div class="file jpg"><span class="ext">JPG</span><div class="lines"></div></div>
-        <div class="file pptx"><span class="ext">PPTX</span><div class="lines"></div></div>
-        <div class="file zip"><span class="ext">ZIP</span><div class="lines"></div></div>
-        <div class="file txt"><span class="ext">TXT</span><div class="lines"></div></div>
-        <div class="file md"><span class="ext">MD</span><div class="lines"></div></div>
-        <div class="file sql"><span class="ext">SQL</span><div class="lines"></div></div>
+        <div class="doc ac3"></div><div class="doc"></div><div class="doc ac1"></div>
+        <div class="doc"></div><div class="doc ac2"></div><div class="doc"></div>
+        <div class="doc ac1"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac2"></div>
       </div>
     </div>
 
     <div class="row" data-dir="right">
       <div class="track">
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
-        <div class="file xml"><span class="ext">XML</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file webp"><span class="ext">WEBP</span><div class="lines"></div></div>
-        <div class="file tiff"><span class="ext">TIFF</span><div class="lines"></div></div>
-        <div class="file png"><span class="ext">PNG</span><div class="lines"></div></div>
-        <div class="file jpg"><span class="ext">JPG</span><div class="lines"></div></div>
-        <div class="file pptx"><span class="ext">PPTX</span><div class="lines"></div></div>
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
-        <div class="file docx"><span class="ext">DOCX</span><div class="lines"></div></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac2"></div><div class="doc ac3"></div><div class="doc"></div>
+        <div class="doc ac1"></div><div class="doc"></div><div class="doc ac2"></div>
+        <div class="doc"></div><div class="doc ac3"></div>
       </div>
       <div class="track" aria-hidden="true">
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
-        <div class="file xml"><span class="ext">XML</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file webp"><span class="ext">WEBP</span><div class="lines"></div></div>
-        <div class="file tiff"><span class="ext">TIFF</span><div class="lines"></div></div>
-        <div class="file png"><span class="ext">PNG</span><div class="lines"></div></div>
-        <div class="file jpg"><span class="ext">JPG</span><div class="lines"></div></div>
-        <div class="file pptx"><span class="ext">PPTX</span><div class="lines"></div></div>
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
-        <div class="file docx"><span class="ext">DOCX</span><div class="lines"></div></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac2"></div><div class="doc ac3"></div><div class="doc"></div>
+        <div class="doc ac1"></div><div class="doc"></div><div class="doc ac2"></div>
+        <div class="doc"></div><div class="doc ac3"></div>
       </div>
     </div>
 
     <div class="row" data-dir="left">
       <div class="track">
-        <div class="file zip"><span class="ext">ZIP</span><div class="lines"></div></div>
-        <div class="file ai"><span class="ext">AI</span><div class="lines"></div></div>
-        <div class="file psd"><span class="ext">PSD</span><div class="lines"></div></div>
-        <div class="file html"><span class="ext">HTML</span><div class="lines"></div></div>
-        <div class="file md"><span class="ext">MD</span><div class="lines"></div></div>
-        <div class="file txt"><span class="ext">TXT</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file xlsx"><span class="ext">XLSX</span><div class="lines"></div></div>
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
+        <div class="doc ac2"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac2"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div>
       </div>
       <div class="track" aria-hidden="true">
-        <div class="file zip"><span class="ext">ZIP</span><div class="lines"></div></div>
-        <div class="file ai"><span class="ext">AI</span><div class="lines"></div></div>
-        <div class="file psd"><span class="ext">PSD</span><div class="lines"></div></div>
-        <div class="file html"><span class="ext">HTML</span><div class="lines"></div></div>
-        <div class="file md"><span class="ext">MD</span><div class="lines"></div></div>
-        <div class="file txt"><span class="ext">TXT</span><div class="lines"></div></div>
-        <div class="file csv"><span class="ext">CSV</span><div class="lines"></div></div>
-        <div class="file xlsx"><span class="ext">XLSX</span><div class="lines"></div></div>
-        <div class="file json"><span class="ext">JSON</span><div class="lines"></div></div>
-        <div class="file pdf"><span class="ext">PDF</span><div class="lines"></div></div>
+        <div class="doc ac2"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div><div class="doc"></div>
+        <div class="doc ac2"></div><div class="doc"></div><div class="doc ac3"></div>
+        <div class="doc"></div><div class="doc ac1"></div>
       </div>
     </div>
   </div>
 
-  <!-- Zoomed duplicate through circular mask -->
+  <!-- Zoomed duplicate masked by a circular lens -->
   <div class="lens-mask" aria-hidden="true">
-    <div class="wall zoom" id="wall-zoom"></div>
+    <div class="wall zoom" id="wall-zoom">
+      <!-- Duplicate the rows exactly so the animation stays in sync -->
+      <!-- (We simply clone the same structure via JS on load to avoid duplication here) -->
+    </div>
   </div>
 
   <!-- Lens ring -->
   <div class="ring" aria-hidden="true"></div>
 
-  <!-- Copy -->
+  <!-- Message overlay -->
   <div class="overlay" role="status" aria-live="polite">
     <span class="tag">DocLens.xyz</span>
     <h1>Polishing the Lens</h1>
@@ -294,35 +250,42 @@
     <div class="brand">Part of Digiwares — digiwares.xyz</div>
   </div>
 
-  <div class="footer">Questions? Reach us at <a href="mailto:write@diigwares.xyz">write@diigwares.xyz</a></div>
+  <div class="footer">Questions? Reach us at <a href="mailto:hello@digiwares.xyz">hello@digiwares.xyz</a></div>
 
 <script>
-  // Clone base wall into zoom wall (keeps animations perfectly in sync)
+  // Clone the base wall DOM into the zoom wall so animations line up 1:1
   (function syncWalls(){
     const base = document.getElementById('wall-base');
     const zoom = document.getElementById('wall-zoom');
     zoom.innerHTML = base.innerHTML;
   })();
 
-  // Lens position
+  // Update CSS variables for lens position
   const root = document.documentElement;
   function setPos(x,y){
     root.style.setProperty('--x', x + 'px');
     root.style.setProperty('--y', y + 'px');
   }
+  // Center on load
   setPos(window.innerWidth*0.5, window.innerHeight*0.5);
-  addEventListener('pointermove', (e)=> setPos(e.clientX, e.clientY), {passive:true});
-  addEventListener('touchmove', (e)=>{
-    const t = e.touches[0]; if(t) setPos(t.clientX, t.clientY);
+
+  // Move with mouse / touch
+  window.addEventListener('pointermove', (e)=> setPos(e.clientX, e.clientY), {passive:true});
+  window.addEventListener('touchmove', (e)=>{
+    const t = e.touches[0];
+    if(t) setPos(t.clientX, t.clientY);
   }, {passive:true});
 
-  // Respect reduce-motion
-  const mq = matchMedia('(prefers-reduced-motion: reduce)');
+  // Reduce motion preference: pause animations if user prefers
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
   function toggleMotion(){
     const play = !mq.matches;
-    document.querySelectorAll('.row').forEach(r=>{ r.style.animationPlayState = play ? 'running' : 'paused'; });
+    document.querySelectorAll('.row').forEach(r=>{
+      r.style.animationPlayState = play ? 'running' : 'paused';
+    });
   }
-  mq.addEventListener?.('change', toggleMotion); toggleMotion();
+  mq.addEventListener?.('change', toggleMotion);
+  toggleMotion();
 </script>
 </body>
 </html>
