@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocLens.xyz – We’ll Be Back Soon</title>
+  <style>
+    body {
+      background: #1e1b4b; /* deep indigo */
+      color: #e0e7ff;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+    .glow {
+      font-weight: bold;
+      color: #c7d2fe;
+      text-shadow: 0 0 10px #6366f1, 0 0 20px #818cf8;
+    }
+    .loader {
+      margin-top: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-left-color: #818cf8;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1 class="glow">📄 DocLens.xyz</h1>
+  <p>We’re polishing our lenses to give you a sharper view.<br>Back online very soon.</p>
+  <div class="loader"></div>
+</body>
+</html>
